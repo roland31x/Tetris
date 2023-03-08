@@ -87,6 +87,10 @@ namespace Tetris
                 {
                     heldBlock = nextBlock;
                     HeldBlockDraw();
+                    if(currentStack.Count == 0)
+                    {
+                        currentStack.AddNewStack();
+                    }
                     nextBlock = currentStack.Pop();
                     NextBlockDraw();
                 }
