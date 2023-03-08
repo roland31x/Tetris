@@ -46,6 +46,10 @@ namespace Tetris
                 nr.Remove(seed);
             }
         }
+        public void Push(Block block)
+        {
+            blocks.Push(block);
+        }
         public Block Pop()
         {
             return blocks.Pop();

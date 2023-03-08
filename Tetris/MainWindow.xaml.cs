@@ -59,41 +59,80 @@ namespace Tetris
         void Play(object sender, KeyEventArgs e)
         {
             Key pressed = e.Key;
-            if(pressed == Key.Left)
+            if (pressed == Key.Left)
             {
                 Offset--;
                 Move(-1);
             }
-            if(pressed == Key.Right)
+            if (pressed == Key.Right)
             {
                 Offset++;
                 Move(1);
             }
-            if (pressed == Key.Space) 
+            if (pressed == Key.D)
             {
-                RotateCurrentBlock();
-                
+                RotateCurrentBlock_Clockwise();
+            }
+            if (pressed == Key.A)
+            {
+                RotateCurrentBlock_AntiClockwise();
             }
             if (pressed == Key.Down)
             {
-                FallDelay = 100;               
+                FallDelay = 100;
+            }
+            if (pressed == Key.C)
+            {
+                if (heldBlock == null)
+                {
+                    heldBlock = nextBlock;
+                    HeldBlockDraw();
+                    nextBlock = currentStack.Pop();
+                    NextBlockDraw();
+                }
+                else
+                {
+                    currentStack.Push(nextBlock);
+                    nextBlock = heldBlock;
+                    NextBlockDraw();
+                    heldBlock = null;
+                    HeldBlockDraw();
+                }
+
             }
         }
-        void RotateCurrentBlock()
+        void RotateCurrentBlock_AntiClockwise()
+        {
+            if (currentBlock != null)
+            {
+                Block Temp = new Block(currentBlock);
+                if (CanRotate(Temp,3))
+                {
+                    currentBlock.Rotate();
+                    currentBlock.Rotate();
+                    currentBlock.Rotate();
+                    Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
+                }
+            }
+        }
+        void RotateCurrentBlock_Clockwise()
         {
             if(currentBlock != null)
             {
                 Block Temp = new Block(currentBlock);
-                if (CanRotate(Temp))
+                if (CanRotate(Temp,1))
                 {
                     currentBlock.Rotate();
                     Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
                 }
             }           
         }
-        bool CanRotate(Block b)
+        bool CanRotate(Block b,int times)
         {
-            b.Rotate();
+            for(int i = 0; i < times; i++)
+            {
+                b.Rotate();
+            }           
             return CanFall(b, b.H, OffsetCheck(this.Offset,b));
         }
         void Move(int i)
@@ -116,6 +155,51 @@ namespace Tetris
         {
             DrawGameArea();
             DrawNextBlockArea();
+            DrawHeldBlockArea();
+        }
+        void DrawHeldBlockArea()
+        {
+            HoldBlock.Width = Width / 5;
+            HoldBlock.Height = Height / 5;
+            Canvas.SetLeft(HoldBlock, 60);
+            Canvas.SetTop(HoldBlock, (Height - HoldBlock.Height) / 2);
+            HoldBlock.Background = new SolidColorBrush(Colors.Gray);
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    HoldBlock.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(HoldBlock.Width / 4) });
+
+                }
+                HoldBlock.RowDefinitions.Add(new RowDefinition { Height = new GridLength(HoldBlock.Height / 4) });
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    Label l = new Label
+                    {
+                        Background = new SolidColorBrush(Colors.White),
+                        Width = HoldBlock.Width / 4,
+                        Height = HoldBlock.Height / 4,
+                    };
+                    HoldBlock.Children.Add(l);
+                    Grid.SetRow(l, i);
+                    Grid.SetColumn(l, j);
+                    h_block[i, j] = l;
+                }
+            }
+            TextBlock t = new TextBlock
+            {
+                Width = NextBlock.Width,
+                Height = NextBlock.Height,
+                Text = "HELD BLOCK:",
+                TextAlignment = TextAlignment.Center,
+                FontSize = 33,
+            };
+            MainCanvas.Children.Add(t);
+            Canvas.SetLeft(t, 70);
+            Canvas.SetTop(t, ((Height - NextBlock.Height) / 2) - 80);
         }
         void DrawNextBlockArea()
         {
@@ -209,12 +293,41 @@ namespace Tetris
         async Task StartGame()
         {
             BlockStack blockStack = new BlockStack();
+            currentStack = blockStack;
             nextBlock = blockStack.Pop();
             while (Alive)
             {
                 await SpawnNewBlock(blockStack);
             }
             MessageBox.Show("You died", "Game Over");          
+        }
+        void HeldBlockDraw()
+        {
+            if (heldBlock != null)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        h_block[i, j].Background = new SolidColorBrush(Colors.White);
+                        if (heldBlock.Body[i, j] == 1)
+                        {
+                            h_block[i, j].Background = heldBlock.Color;
+                        }
+
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        h_block[i, j].Background = new SolidColorBrush(Colors.White);
+                    }
+                }
+            }
         }
         void NextBlockDraw()
         {
