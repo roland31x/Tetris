@@ -31,6 +31,7 @@ namespace Tetris
         int FallDelay = 1000;
         int Offset = 3;
         int LinesCleared = 0;
+        bool IsPlaying { get; set; }
         bool Alive { get; set; }
         Block? currentBlock { get; set; }
         Block? nextBlock { get; set; }
@@ -45,10 +46,9 @@ namespace Tetris
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitialDraw();
+            IsPlaying = false;
             KeyDown += Play;
-            KeyUp += FallDelaySet;
-            
-            Alive = true;
+            KeyUp += FallDelaySet;          
         }
         void FallDelaySet(object sender, KeyEventArgs e)
         {
@@ -59,57 +59,60 @@ namespace Tetris
         }
         void Play(object sender, KeyEventArgs e)
         {
-            if (e.IsRepeat)
+            if (IsPlaying)
             {
-                return;
-            }
-            Key pressed = e.Key;
-            
-            if (pressed == Key.Left)
-            {
-                Offset--;
-                Move(-1);
-            }
-            if (pressed == Key.Right)
-            {
-                Offset++;
-                Move(1);
-            }
-            if (pressed == Key.D)
-            {
-                RotateCurrentBlock_Clockwise();
-            }
-            if (pressed == Key.A)
-            {
-                RotateCurrentBlock_AntiClockwise();
-            }
-            if (pressed == Key.Down)
-            {
-                FallDelay = 100;
-            }
-            if (pressed == Key.C)
-            {
-                if (heldBlock == null)
+                if (e.IsRepeat)
                 {
-                    heldBlock = nextBlock;
-                    HeldBlockDraw();
-                    if(currentStack.Count == 0)
-                    {
-                        currentStack.AddNewStack();
-                    }
-                    nextBlock = currentStack.Pop();
-                    NextBlockDraw();
+                    return;
                 }
-                else
-                {
-                    currentStack.Push(nextBlock);
-                    nextBlock = heldBlock;
-                    NextBlockDraw();
-                    heldBlock = null;
-                    HeldBlockDraw();
-                }
+                Key pressed = e.Key;
 
-            }
+                if (pressed == Key.Left)
+                {
+                    Offset--;
+                    Move(-1);
+                }
+                if (pressed == Key.Right)
+                {
+                    Offset++;
+                    Move(1);
+                }
+                if (pressed == Key.D)
+                {
+                    RotateCurrentBlock_Clockwise();
+                }
+                if (pressed == Key.A)
+                {
+                    RotateCurrentBlock_AntiClockwise();
+                }
+                if (pressed == Key.Down)
+                {
+                    FallDelay = 100;
+                }
+                if (pressed == Key.C)
+                {
+                    if (heldBlock == null)
+                    {
+                        heldBlock = nextBlock;
+                        HeldBlockDraw();
+                        if (currentStack.Count == 0)
+                        {
+                            currentStack.AddNewStack();
+                        }
+                        nextBlock = currentStack.Pop();
+                        NextBlockDraw();
+                    }
+                    else
+                    {
+                        currentStack.Push(nextBlock);
+                        nextBlock = heldBlock;
+                        NextBlockDraw();
+                        heldBlock = null;
+                        HeldBlockDraw();
+                    }
+
+                }
+            }           
         }
         void RotateCurrentBlock_AntiClockwise()
         {
@@ -340,8 +343,24 @@ namespace Tetris
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            ResetGame();
             StartGame();
             StartButton.IsEnabled = false;
+        }
+        public void ResetGame()
+        {
+            for(int i = 0; i < PlayHeight + 2; i++)
+            {
+                for(int j = 0; j < PlayWidth; j++)
+                {
+                    blocks[i, j].Tag = 0;
+                    blocks[i, j].Background = null;
+                }
+            }
+            Alive = true;
+            IsPlaying = true;
+            LinesCleared = 0;
+            FallDelay = 1000;
         }
         async Task StartGame()
         {
@@ -352,7 +371,9 @@ namespace Tetris
             {
                 await SpawnNewBlock(blockStack);
             }
-            MessageBox.Show("You died", "Game Over");          
+            MessageBox.Show("You died", "Game Over");
+            StartButton.IsEnabled = true;
+            IsPlaying = false;
         }
         void HeldBlockDraw()
         {
