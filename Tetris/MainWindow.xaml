@@ -11,7 +11,8 @@
         <Grid x:Name="Area"/>
         <Grid x:Name="NextBlock"></Grid>
         <Grid x:Name="HoldBlock"></Grid>
-        <Button x:Name="StartButton" Click="StartButton_Click" Height="63" Canvas.Left="386" Canvas.Top="10" Width="228" HorizontalAlignment="Center" VerticalAlignment="Center" Content="START GAME" FontSize="36"/>
+        <Button Foreground ="{StaticResource RainbowGradient1}" Background="{StaticResource BlackBlueGradient}" Style ="{DynamicResource ButtonHoverStyle}" x:Name="StartButton" Click="StartButton_Click" Height="63" Canvas.Left="367" Canvas.Top="22" Width="266" HorizontalAlignment="Left" VerticalAlignment="Top" Content="START GAME" FontSize="36" BorderBrush="Black" FontFamily="Showcard Gothic">
+        </Button>
 
     </Canvas>
 </Window>
