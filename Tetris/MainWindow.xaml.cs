@@ -359,15 +359,21 @@ namespace Tetris
                     Label l = new Label
                     {
                         Background = null,
-                        Width = Area.Width / PlayWidth - 1,
-                        Height = Area.Height / PlayHeight - 1,
+                        Width = Area.Width / PlayWidth,
+                        Height = Area.Height / PlayHeight,
                         Tag = 0,
                     };
+                    Border border = new Border
+                    {
+                        BorderBrush = null,
+                        BorderThickness = new Thickness(1),
+                    };
+                    border.Child = l;
                     if (i >= 2)
                     {
-                        Area.Children.Add(l);
-                        Grid.SetRow(l, i - 2);
-                        Grid.SetColumn(l, j);
+                        Area.Children.Add(border);
+                        Grid.SetRow(border, i - 2);
+                        Grid.SetColumn(border, j);
                     }
                     blocks[i, j] = l;
                 }
@@ -590,6 +596,7 @@ namespace Tetris
                     if (Convert.ToInt16(blocks[i, j].Tag) == 0)
                     {
                         blocks[i, j].Background = null;
+                        (blocks[i, j].Parent as Border).BorderBrush = null;
                     }
                 }
             }
@@ -601,6 +608,7 @@ namespace Tetris
                     {
                         blocks[k + i, j + Offset].Tag = 1;
                         blocks[k + i, j + Offset].Background = b.Color;
+                        (blocks[k + i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }
@@ -628,6 +636,7 @@ namespace Tetris
                     if (Convert.ToInt16(blocks[i,j].Tag) == 0)
                     {
                         blocks[i, j].Background = null;
+                        (blocks[i, j].Parent as Border).BorderBrush = null;
                     }                          
                 }
             }
@@ -639,6 +648,7 @@ namespace Tetris
                     if (b.Body[i, j] == 1)
                     {
                         blocks[i + fell, j + Offset].Background = b.Color;
+                        (blocks[i + fell, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }           
