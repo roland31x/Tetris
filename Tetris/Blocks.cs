@@ -98,7 +98,7 @@ namespace Tetris
         {
             Color = b.Color;
             Body = new int[4, 4];
-            FillBody(b.Seed);
+            FillBody(b);
             Seed = b.Seed;
             H = b.H;
         }
@@ -146,6 +146,19 @@ namespace Tetris
                 }
             }
             
+        }
+        void FillBody(Block b)
+        {
+            for(int i = 0; i < 4; i++)
+            {
+                for(int j = 0; j < 4; j++)
+                {
+                    if (b.Body[i,j] == 1)
+                    {
+                        this.Body[i, j] = 1;
+                    }
+                }
+            }
         }
         void FillBody(int i)
         {

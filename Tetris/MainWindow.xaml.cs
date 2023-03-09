@@ -511,7 +511,7 @@ namespace Tetris
             }
             if (waitanimation)
             {
-                await LineDestroy(okLines, Colors.DarkGray);
+                await LineDestroy(okLines, Colors.Black);
                 await LineDestroy(okLines, Colors.LightGray);
                 await LineDestroy(okLines, Colors.Transparent);
                 for (int i = 2; i < PlayHeight + 2; i++)
