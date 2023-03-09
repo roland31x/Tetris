@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tetris"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="1000">
+        Title="Tetris" Height="1000" Width="1000">
     <Canvas x:Name="MainCanvas">
         <Grid x:Name="Area"/>
         <Grid x:Name="NextBlock"></Grid>

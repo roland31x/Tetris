@@ -145,8 +145,40 @@ namespace Tetris
             for(int i = 0; i < times; i++)
             {
                 b.Rotate();
-            }           
-            return CanFall(b, b.H, OffsetCheck(this.Offset,b));
+            }
+            if (CanFall(b, b.H, OffsetCheck(this.Offset, b)))
+            {
+                return true;
+            }
+            else if (CanFall(b, b.H, OffsetCheck(this.Offset - 1, b)))
+            {
+                Offset -= 1;
+                return true;
+            }
+            else if (CanFall(b, b.H, OffsetCheck(this.Offset + 1, b)))
+            {
+                Offset += 1;
+                return true;
+            }
+            else if (CanFall(b, b.H + 1, OffsetCheck(this.Offset, b)))
+            {
+                currentBlock.H += 1;
+                return true;
+            }
+            else if (CanFall(b, b.H + 1, OffsetCheck(this.Offset - 1, b)))
+            {
+                Offset -= 1;
+                currentBlock.H += 1;
+                return true;
+            }
+            else if (CanFall(b, b.H + 1, OffsetCheck(this.Offset + 1, b)))
+            {
+                Offset += 1;
+                currentBlock.H += 1;
+                return true;
+            }
+            
+            else return false;
         }
         void Move(int i)
         {
