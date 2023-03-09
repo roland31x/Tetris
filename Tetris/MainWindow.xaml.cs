@@ -205,6 +205,7 @@ namespace Tetris
             DrawGameArea();
             DrawNextBlockArea();
             DrawHeldBlockArea();
+
         }
         void DrawHeldBlockArea()
         {
@@ -456,28 +457,28 @@ namespace Tetris
         async Task SpawnNewBlock(BlockStack bs)
         {
             this.Offset = 3;         
-            Block r = nextBlock;
-            currentBlock = r;
+            Block gameBlock = nextBlock;
+            currentBlock = gameBlock;
             nextBlock = bs.Pop();
             NextBlockDraw();
             if (bs.Count == 0)
             {
                 bs.AddNewStack();
             }           
-            Spawn(r);
-            r.H = 1;         
-            while (CanFall(r, r.H, OffsetCheck(this.Offset, r)))
+            Spawn(gameBlock);
+            gameBlock.H = 1;         
+            while (CanFall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock)))
             {
-                Fall(r, r.H, OffsetCheck(this.Offset, r));
+                Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                 await Task.Delay(FallDelay);
-                r.H++;
+                gameBlock.H++;
             }
-            if(r.H == 1)
+            if(gameBlock.H == 1)
             {
                 Alive = false;
                 return;
             }
-            MarkCurrentBlock(r, r.H - 1, OffsetCheck(this.Offset, r));
+            MarkCurrentBlock(gameBlock, gameBlock.H - 1, OffsetCheck(this.Offset, gameBlock));
             await LineCheck();
 
         }
