@@ -562,8 +562,9 @@ namespace Tetris
                         {
                             for (int j = 0; j < PlayWidth; j++)
                             {
-                                blocks[k, j].Background = new SolidColorBrush(Colors.Black);
+                               // blocks[k, j].Background = new SolidColorBrush(Colors.Black);
                                 (blocks[k - 1, j].Background, blocks[k, j].Background) = (blocks[k, j].Background, blocks[k - 1, j].Background);
+                                ((blocks[k - 1, j].Parent as Border).BorderBrush, (blocks[k, j].Parent as Border).BorderBrush) = ((blocks[k, j].Parent as Border).BorderBrush, (blocks[k - 1, j].Parent as Border).BorderBrush);
                                 (blocks[k - 1, j].Tag, blocks[k, j].Tag) = (blocks[k, j].Tag, blocks[k - 1, j].Tag);
                             }
                             k--;
@@ -623,6 +624,7 @@ namespace Tetris
                     if (b.Body[i, j] == 1)
                     {
                         blocks[i, j + Offset].Background = b.Color;
+                        (blocks[i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }           
