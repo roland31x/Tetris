@@ -23,16 +23,22 @@ namespace Tetris
     /// </summary>
     public partial class MainWindow : Window
     {
+        const int PlayWidth = 10;
+        const int PlayHeight = 20;
         Label[,] blocks = new Label[22, 10];
         BlockStack? currentStack { get; set; }
 
-        int PlayWidth = 10;
-        int PlayHeight = 20;
+        int CurrentLevel = 8;
+        int Score = 0;
         int FallDelay = 1000;
-        int Offset = 3;
         int LinesCleared = 0;
+
+        int Offset = 3;
+        
         bool IsPlaying { get; set; }
         bool Alive { get; set; }
+
+
         Block? currentBlock { get; set; }
         Block? nextBlock { get; set; }
         Label[,] n_block = new Label[4, 4];
@@ -47,24 +53,16 @@ namespace Tetris
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitialDraw();
             IsPlaying = false;
-            KeyDown += Play;
-            KeyUp += FallDelaySet;          
-        }
-        void FallDelaySet(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Down)
-            {
-                FallDelay = 1000;
-            }
+            KeyDown += Play;          
         }
         void Play(object sender, KeyEventArgs e)
         {
             if (IsPlaying)
             {
-                if (e.IsRepeat)
-                {
-                    return;
-                }
+                //if (e.IsRepeat)
+                //{
+                //    return;
+                //}
                 Key pressed = e.Key;
 
                 if (pressed == Key.Left)
@@ -87,7 +85,12 @@ namespace Tetris
                 }
                 if (pressed == Key.Down)
                 {
-                    FallDelay = 100;
+                    Block gameBlock = currentBlock;
+                    if(CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)))
+                    {
+                        gameBlock.H++;
+                        Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+                    }
                 }
                 if (pressed == Key.C)
                 {
@@ -399,7 +402,7 @@ namespace Tetris
             Alive = true;
             IsPlaying = true;
             LinesCleared = 0;
-            FallDelay = 1000;
+            //FallDelay = 1000;
         }
         async Task StartGame()
         {
@@ -472,21 +475,27 @@ namespace Tetris
                 bs.AddNewStack();
             }           
             Spawn(gameBlock);
-            gameBlock.H = 1;         
-            while (CanFall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock)))
+
+            await PlayWithBlock(gameBlock);
+
+
+        }
+        async Task PlayWithBlock(Block gameBlock)
+        {
+            gameBlock.H = 0;
+            while (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)))
             {
+                gameBlock.H++;
                 Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                 await Task.Delay(FallDelay);
-                gameBlock.H++;
             }
-            if(gameBlock.H == 1)
+            if (gameBlock.H == 1)
             {
                 Alive = false;
                 return;
             }
-            MarkCurrentBlock(gameBlock, gameBlock.H - 1, OffsetCheck(this.Offset, gameBlock));
+            MarkCurrentBlock(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
             await LineCheck();
-
         }
         int OffsetCheck(int off, Block b)
         {
@@ -550,6 +559,7 @@ namespace Tetris
             }
             if (waitanimation)
             {
+                int RoundLines = 0;
                 await LineDestroy(okLines, Colors.Black);
                 await LineDestroy(okLines, Colors.LightGray);
                 await LineDestroy(okLines, Colors.Transparent);
@@ -557,6 +567,7 @@ namespace Tetris
                 {
                     if (okLines[i] == 1)
                     {
+                        RoundLines++;
                         int k = i;
                         while (k > 2)
                         {
@@ -571,7 +582,44 @@ namespace Tetris
                         }
                     }
                 }
+                switch (RoundLines)
+                {
+                    case 1:
+                        Score += 40 * CurrentLevel;
+                        break;
+                    case 2:
+                        Score += 100 * CurrentLevel;
+                        break;
+                    case 3:
+                        Score += 300 * CurrentLevel;
+                        break;
+                    case 4:
+                        Score += 1200 * CurrentLevel;
+                        break;                        
+                }
+                if(LinesCleared - 10 > 0)
+                {
+                    CurrentLevel++;
+                    LevelCheck();
+                    LinesCleared = 0;
+                }
+                ProgressDraw();
             }           
+        }
+        void LevelCheck()
+        {
+            if(CurrentLevel <= 8)
+            {
+                FallDelay = 1000 - CurrentLevel * 100;
+            }
+            else
+            {
+                FallDelay = 100;
+            }
+        }
+        void ProgressDraw()
+        {
+
         }
         async Task LineDestroy(int[] okLines, Color color)
         {
