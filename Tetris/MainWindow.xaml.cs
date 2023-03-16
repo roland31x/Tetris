@@ -227,11 +227,14 @@ namespace Tetris
             Canvas.SetLeft(progress, Canvas.GetLeft(ProgressBackground) + 4);
             Canvas.SetTop(progress, Canvas.GetTop(ProgressBackground) + 4);
         }
-        void UpdateProgress()
+        async void UpdateProgress()
         {
-            if (progress != null)
+            double startwidth = progress.Width;
+            double endwidth = ((ProgressBackground.Width - 4) * (double)LinesCleared) / 11;
+            for(double i = startwidth; i <= endwidth; i++)
             {
-                progress.Width = ((ProgressBackground.Width - 4) * (double)LinesCleared ) / 11;
+                progress.Width = i;
+                await Task.Delay(20);
             }
             ScoreLabel.Content = Score.ToString();
         }
