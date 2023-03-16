@@ -11,8 +11,13 @@
         <Grid x:Name="Area"/>
         <Grid x:Name="NextBlock"></Grid>
         <Grid x:Name="HoldBlock"></Grid>
+        <Label x:Name="CurrentLevelLabel" Height="54" Width="248" Canvas.Left="52" Canvas.Top="488" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Bauhaus 93" Content="LEVEL" FontSize="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch"/>
+
+        <Label x:Name="ProgressBackground" Height="42" Width="248" Canvas.Left="52" Canvas.Top="547" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Black"></Label>
         <Button Foreground ="{StaticResource RainbowGradient1}" Background="{StaticResource BlackBlueGradient}" Style ="{DynamicResource ButtonHoverStyle}" x:Name="StartButton" Click="StartButton_Click" Height="63" Canvas.Left="367" Canvas.Top="22" Width="266" HorizontalAlignment="Left" VerticalAlignment="Top" Content="START GAME" FontSize="36" BorderBrush="Black" FontFamily="Showcard Gothic">
         </Button>
+        <Label x:Name="CurrentLevelLabel_Copy" Height="54" Width="248" Canvas.Left="700" Canvas.Top="488" FontFamily="Bauhaus 93" Content="SCORE" FontSize="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <Label x:Name="ScoreLabel" Height="42" Width="248" Canvas.Left="700" Canvas.Top="547" Background="Black" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Content="" FontSize="22" FontFamily="Bernard MT Condensed"/>
 
     </Canvas>
 </Window>

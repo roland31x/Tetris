@@ -14,7 +14,7 @@ namespace Tetris
     {
         Stack<Block> blocks { get; set; }
         public int Count { get {  return blocks.Count; } }
-        Block? Held { get; set; }
+
         static readonly Random rng = new Random();
         public BlockStack() 
         {
@@ -30,7 +30,6 @@ namespace Tetris
                 blocks.Push(new Block(seed));
                 nr.Remove(seed);
             }
-            Held = null;
         }
         public void AddNewStack()
         {
@@ -62,30 +61,13 @@ namespace Tetris
             }
             else return new Block(0);
         }
-        public void GetHeldBlock()
-        {
-            if (Held != null)
-            {
-                blocks.Push(Held);
-            }
-            else return;
-        }
-        public bool Hold(Block b)
-        {
-            if (Held == null)
-            {
-                Held = b;
-                return true;
-            }
-            else return false;
-        }
     }
     class Block
     {
         public int[,] Body { get; set; }
         public int Seed { get; set; }
         public int H { get; set; }
-        public SolidColorBrush Color { get; set;}
+        public SolidColorBrush Color { get; private set; }
         public Block(int seed)
         {
             Color = GetColor(seed);

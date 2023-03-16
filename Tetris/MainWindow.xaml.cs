@@ -28,7 +28,7 @@ namespace Tetris
         Label[,] blocks = new Label[22, 10];
         BlockStack? currentStack { get; set; }
 
-        int CurrentLevel = 8;
+        int CurrentLevel = 1;
         int Score = 0;
         int FallDelay = 1000;
         int LinesCleared = 0;
@@ -44,6 +44,9 @@ namespace Tetris
         Label[,] n_block = new Label[4, 4];
         Block? heldBlock { get; set; }
         Label[,] h_block = new Label[4, 4];
+
+        Label progress;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -52,6 +55,7 @@ namespace Tetris
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitialDraw();
+            CurrentLevelLabel.Content = $"LEVEL {CurrentLevel}";
             IsPlaying = false;
             KeyDown += Play;          
         }
@@ -208,7 +212,28 @@ namespace Tetris
             DrawGameArea();
             DrawNextBlockArea();
             DrawHeldBlockArea();
+            DrawProgressBar();
 
+        }
+        void DrawProgressBar()
+        {
+            progress = new Label()
+            {
+                Width = 0,
+                Height = ProgressBackground.Height - 8,
+                Background = new SolidColorBrush(Colors.Green)
+            };
+            MainCanvas.Children.Add(progress);
+            Canvas.SetLeft(progress, Canvas.GetLeft(ProgressBackground) + 4);
+            Canvas.SetTop(progress, Canvas.GetTop(ProgressBackground) + 4);
+        }
+        void UpdateProgress()
+        {
+            if (progress != null)
+            {
+                progress.Width = ((ProgressBackground.Width - 4) * (double)LinesCleared ) / 11;
+            }
+            ScoreLabel.Content = Score.ToString();
         }
         void DrawHeldBlockArea()
         {
@@ -599,15 +624,19 @@ namespace Tetris
                 }
                 if(LinesCleared - 10 > 0)
                 {
+                    progress.Width = 0;
                     CurrentLevel++;
+                    MessageBox.Show($"You advanced to level {CurrentLevel}!");
                     LevelCheck();
+                   
                     LinesCleared = 0;
                 }
-                ProgressDraw();
+                UpdateProgress();
             }           
         }
         void LevelCheck()
         {
+            CurrentLevelLabel.Content = $"LEVEL {CurrentLevel}";
             if(CurrentLevel <= 8)
             {
                 FallDelay = 1000 - CurrentLevel * 100;
@@ -616,10 +645,6 @@ namespace Tetris
             {
                 FallDelay = 100;
             }
-        }
-        void ProgressDraw()
-        {
-
         }
         async Task LineDestroy(int[] okLines, Color color)
         {
