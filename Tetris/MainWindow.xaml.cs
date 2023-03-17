@@ -228,7 +228,7 @@ namespace Tetris
             {
                 Width = 0,
                 Height = ProgressBackground.Height - 8,
-                Background = new SolidColorBrush(Colors.Green)
+                Background = new SolidColorBrush(Colors.LimeGreen)
             };
             MainCanvas.Children.Add(progress);
             Canvas.SetLeft(progress, Canvas.GetLeft(ProgressBackground) + 4);
@@ -737,6 +737,8 @@ namespace Tetris
                     }
                 }
             }
+            Score += b.H;
+            UpdateProgress();
         }
         void Spawn(Block b)
         {
