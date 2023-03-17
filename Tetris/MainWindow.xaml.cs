@@ -45,10 +45,10 @@ namespace Tetris
         Block? heldBlock { get; set; }
         Label[,] h_block = new Label[4, 4];
 
-        Label progress;
+        Label progress { get; set; }
 
         public MainWindow()
-        {
+        {           
             InitializeComponent();
             Height = 800;
             Width = 1000;
@@ -57,7 +57,7 @@ namespace Tetris
             InitialDraw();
             CurrentLevelLabel.Content = $"LEVEL {CurrentLevel}";
             IsPlaying = false;
-            KeyDown += Play;          
+            KeyDown += Play;
         }
         void Play(object sender, KeyEventArgs e)
         {
@@ -213,6 +213,7 @@ namespace Tetris
             DrawNextBlockArea();
             DrawHeldBlockArea();
             DrawProgressBar();
+            ScoreLabel.Content = Score.ToString();
 
         }
         void DrawProgressBar()
@@ -229,14 +230,14 @@ namespace Tetris
         }
         async void UpdateProgress()
         {
+            ScoreLabel.Content = Score.ToString();
             double startwidth = progress.Width;
             double endwidth = ((ProgressBackground.Width - 4) * (double)LinesCleared) / 11;
             for(double i = startwidth; i <= endwidth; i++)
             {
                 progress.Width = i;
                 await Task.Delay(20);
-            }
-            ScoreLabel.Content = Score.ToString();
+            }            
         }
         void DrawHeldBlockArea()
         {
@@ -261,8 +262,8 @@ namespace Tetris
                     Label l = new Label
                     {
                         Background = null,
-                        Width = HoldBlock.Width / 4 - 1,
-                        Height = HoldBlock.Height / 4 - 1,
+                        Width = HoldBlock.Width / 4,
+                        Height = HoldBlock.Height / 4,
                     };
                     HoldBlock.Children.Add(l);
                     Grid.SetRow(l, i);
@@ -277,6 +278,7 @@ namespace Tetris
                 Text = "HELD BLOCK:",
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
+                FontFamily = new FontFamily("Bauhaus 93"),
                 Background = new SolidColorBrush(Colors.MediumAquamarine),
             };
             MainCanvas.Children.Add(t);
@@ -320,8 +322,8 @@ namespace Tetris
                     Label l = new Label
                     {
                         Background = null,
-                        Width = NextBlock.Width / 4 - 1,
-                        Height = NextBlock.Height / 4 - 1,
+                        Width = NextBlock.Width / 4,
+                        Height = NextBlock.Height / 4,
                     };
                     NextBlock.Children.Add(l);
                     Grid.SetRow(l, i);
@@ -336,6 +338,7 @@ namespace Tetris
                 Text = "NEXT BLOCK:",
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
+                FontFamily = new FontFamily("Bauhaus 93"),
                 Background = new SolidColorBrush(Colors.MediumAquamarine)
             };
             MainCanvas.Children.Add(t);
@@ -392,19 +395,19 @@ namespace Tetris
                         Background = null,
                         Width = Area.Width / PlayWidth,
                         Height = Area.Height / PlayHeight,
-                        Tag = 0,
+                        Tag = 0,                     
                     };
-                    Border border = new Border
-                    {
-                        BorderBrush = null,
-                        BorderThickness = new Thickness(1),
-                    };
-                    border.Child = l;
+                    //Border border = new Border
+                    //{
+                    //    BorderBrush = null,
+                    //    BorderThickness = new Thickness(1),
+                    //};
+                    //border.Child = l;
                     if (i >= 2)
                     {
-                        Area.Children.Add(border);
-                        Grid.SetRow(border, i - 2);
-                        Grid.SetColumn(border, j);
+                        Area.Children.Add(l);
+                        Grid.SetRow(l, i - 2);
+                        Grid.SetColumn(l, j);
                     }
                     blocks[i, j] = l;
                 }
@@ -449,6 +452,14 @@ namespace Tetris
         {
             if (heldBlock != null)
             {
+                if(heldBlock.Seed > 1)
+                {
+                    Canvas.SetLeft(HoldBlock, 50 + 30);
+                }
+                else
+                {
+                    Canvas.SetLeft(HoldBlock, 50);
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     for (int j = 0; j < 4; j++)
@@ -456,7 +467,7 @@ namespace Tetris
                         h_block[i, j].Background = null;
                         if (heldBlock.Body[i, j] == 1)
                         {
-                            h_block[i, j].Background = heldBlock.Color;
+                            h_block[i, j].Background = heldBlock.image;
                         }
 
                     }
@@ -477,6 +488,14 @@ namespace Tetris
         {
             if(nextBlock != null)
             {
+                if (nextBlock.Seed > 1)
+                {
+                    Canvas.SetLeft(NextBlock, Width - NextBlock.Width - 50 + 30);
+                }
+                else
+                {
+                    Canvas.SetLeft(NextBlock, Width - NextBlock.Width - 50);
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     for (int j = 0; j < 4; j++)
@@ -484,7 +503,7 @@ namespace Tetris
                         n_block[i, j].Background = null;
                         if (nextBlock.Body[i,j] == 1)
                         {
-                            n_block[i, j].Background = nextBlock.Color;
+                            n_block[i, j].Background = nextBlock.image;
                         } 
 
                     }                   
@@ -588,9 +607,12 @@ namespace Tetris
             if (waitanimation)
             {
                 int RoundLines = 0;
-                await LineDestroy(okLines, Colors.Black);
-                await LineDestroy(okLines, Colors.LightGray);
-                await LineDestroy(okLines, Colors.Transparent);
+                for(int i = 0; i < 7; i++)
+                {
+                    await LineDestroy(okLines, 250, Block.GetImage(i));
+                }
+                await LineDestroy(okLines, 500, Colors.Black);
+
                 for (int i = 2; i < PlayHeight + 2; i++)
                 {
                     if (okLines[i] == 1)
@@ -601,9 +623,7 @@ namespace Tetris
                         {
                             for (int j = 0; j < PlayWidth; j++)
                             {
-                               // blocks[k, j].Background = new SolidColorBrush(Colors.Black);
                                 (blocks[k - 1, j].Background, blocks[k, j].Background) = (blocks[k, j].Background, blocks[k - 1, j].Background);
-                                ((blocks[k - 1, j].Parent as Border).BorderBrush, (blocks[k, j].Parent as Border).BorderBrush) = ((blocks[k, j].Parent as Border).BorderBrush, (blocks[k - 1, j].Parent as Border).BorderBrush);
                                 (blocks[k - 1, j].Tag, blocks[k, j].Tag) = (blocks[k, j].Tag, blocks[k - 1, j].Tag);
                             }
                             k--;
@@ -649,7 +669,7 @@ namespace Tetris
                 FallDelay = 100;
             }
         }
-        async Task LineDestroy(int[] okLines, Color color)
+        async Task LineDestroy(int[] okLines,int delay, object color)
         {
             for (int i = 2; i < PlayHeight + 2; i++)
             {
@@ -657,12 +677,19 @@ namespace Tetris
                 {
                     for (int j = 0; j < PlayWidth; j++)
                     {
-                        blocks[i, j].Background = new SolidColorBrush(color);
+                        if(color is ImageBrush)
+                        {
+                            blocks[i, j].Background = color as ImageBrush;
+                        }
+                        else
+                        {
+                            blocks[i, j].Background = null;
+                        }
                         blocks[i, j].Tag = 0;
                     }
                 }
             }
-            await Task.Delay(500);
+            await Task.Delay(delay);
         }
         void MarkCurrentBlock(Block b, int k, int Offset)
         {
@@ -673,7 +700,7 @@ namespace Tetris
                     if (Convert.ToInt16(blocks[i, j].Tag) == 0)
                     {
                         blocks[i, j].Background = null;
-                        (blocks[i, j].Parent as Border).BorderBrush = null;
+                        //(blocks[i, j].Parent as Border).BorderBrush = null;
                     }
                 }
             }
@@ -684,8 +711,8 @@ namespace Tetris
                     if (b.Body[i, j] == 1)
                     {
                         blocks[k + i, j + Offset].Tag = 1;
-                        blocks[k + i, j + Offset].Background = b.Color;
-                        (blocks[k + i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
+                        blocks[k + i, j + Offset].Background = b.image;
+                        //(blocks[k + i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }
@@ -699,8 +726,8 @@ namespace Tetris
                 {
                     if (b.Body[i, j] == 1)
                     {
-                        blocks[i, j + Offset].Background = b.Color;
-                        (blocks[i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
+                        blocks[i, j + Offset].Background = b.image;
+                        //(blocks[i, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }           
@@ -714,7 +741,7 @@ namespace Tetris
                     if (Convert.ToInt16(blocks[i,j].Tag) == 0)
                     {
                         blocks[i, j].Background = null;
-                        (blocks[i, j].Parent as Border).BorderBrush = null;
+                        //(blocks[i, j].Parent as Border).BorderBrush = null;
                     }                          
                 }
             }
@@ -725,8 +752,9 @@ namespace Tetris
                 {
                     if (b.Body[i, j] == 1)
                     {
-                        blocks[i + fell, j + Offset].Background = b.Color;
-                        (blocks[i + fell, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
+                        //blocks[i + fell, j + Offset].Background = b.Color;
+                        blocks[i + fell, j + Offset].Background = b.image;
+                        //(blocks[i + fell, j + Offset].Parent as Border).BorderBrush = new SolidColorBrush(Colors.Black);
                     }
                 }
             }           

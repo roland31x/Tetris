@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Tetris
 {
@@ -68,8 +70,10 @@ namespace Tetris
         public int Seed { get; set; }
         public int H { get; set; }
         public SolidColorBrush Color { get; private set; }
+        public ImageBrush image { get; private set; }
         public Block(int seed)
         {
+            image = GetImage(seed);
             Color = GetColor(seed);
             Body = new int[4, 4];
             FillBody(seed);
@@ -78,6 +82,7 @@ namespace Tetris
         }
         public Block(Block b)
         {
+            image = b.image;
             Color = b.Color;
             Body = new int[4, 4];
             FillBody(b);
@@ -211,7 +216,7 @@ namespace Tetris
             Body[1, 1] = 1;
             Body[1, 2] = 1;
         }
-        SolidColorBrush GetColor(int i)
+        static SolidColorBrush GetColor(int i)
         {
             switch (i)
             {
@@ -231,6 +236,28 @@ namespace Tetris
                     return new SolidColorBrush(Colors.Orange);
                 default:
                     return new SolidColorBrush(Colors.Black);
+            }
+        }
+        public static ImageBrush GetImage(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/cyan.jpg")));
+                case 1:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/yellow.jpg")));
+                case 2:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/purple.jpg")));
+                case 3:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/green.jpg")));
+                case 4:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/red.jpg")));
+                case 5:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/blue.jpg")));
+                case 6:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/orange.jpg")));
+                default:
+                    return new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/red.jpg")));
             }
         }
     }

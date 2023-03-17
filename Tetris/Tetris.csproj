@@ -8,10 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\blue.jpg" />
+    <None Remove="Images\cyan.jpg" />
+    <None Remove="Images\green.jpg" />
+    <None Remove="Images\orange.jpg" />
+    <None Remove="Images\purple.jpg" />
+    <None Remove="Images\red.jpg" />
+    <None Remove="Images\yellow.jpg" />
     <None Remove="tetris-logo.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\blue.jpg" />
+    <Resource Include="Images\cyan.jpg" />
+    <Resource Include="Images\green.jpg" />
+    <Resource Include="Images\orange.jpg" />
+    <Resource Include="Images\purple.jpg" />
+    <Resource Include="Images\red.jpg" />
+    <Resource Include="Images\yellow.jpg" />
     <Resource Include="tetris-logo.png" />
   </ItemGroup>
 
