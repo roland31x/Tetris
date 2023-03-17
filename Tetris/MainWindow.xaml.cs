@@ -89,17 +89,18 @@ namespace Tetris
                 }
                 if (pressed == Key.Down)
                 {
+                    // THIS BUGS OUT THE FALLING AVOID
                     Block gameBlock = currentBlock;
-                    if(CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)))
+                    if (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)) && gameBlock.IsAlive)
                     {
                         gameBlock.H++;
                         Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                     }
                     else
                     {
-                        MarkCurrentBlock(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                         gameBlock.IsAlive = false;
                     }
+                    //FallDelay = 100;
                 }
                 if (pressed == Key.C)
                 {
@@ -438,6 +439,12 @@ namespace Tetris
             Alive = true;
             IsPlaying = true;
             LinesCleared = 0;
+            Score = 0;
+            CurrentLevel = 1;
+            progress.Width = 0;
+            heldBlock = null;
+            LevelCheck();
+            UpdateProgress();
             //FallDelay = 1000;
         }
         async Task StartGame()
@@ -535,18 +542,27 @@ namespace Tetris
         async Task PlayWithBlock(Block gameBlock)
         {
             gameBlock.H = 0;
-            while (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)) && gameBlock.IsAlive)
+            while (gameBlock.IsAlive)
             {
-                gameBlock.H++;
-                Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+                if(CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)))
+                {
+                    gameBlock.H++;
+                    Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+                }
+                else
+                {
+                    gameBlock.IsAlive = false;
+                    break;
+                }
                 await Task.Delay(FallDelay);
             }
-            if (gameBlock.H == 1)
+            if (gameBlock.H <= 1)
             {
                 Alive = false;
                 return;
             }
             MarkCurrentBlock(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+            gameBlock.IsAlive = false;         
             await LineCheck();
         }
         int OffsetCheck(int off, Block b)
