@@ -71,8 +71,10 @@ namespace Tetris
         public int H { get; set; }
         public SolidColorBrush Color { get; private set; }
         public ImageBrush image { get; private set; }
+        public bool IsAlive { get; set; }
         public Block(int seed)
         {
+            IsAlive = true;
             image = GetImage(seed);
             Color = GetColor(seed);
             Body = new int[4, 4];

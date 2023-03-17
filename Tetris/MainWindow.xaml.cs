@@ -95,6 +95,11 @@ namespace Tetris
                         gameBlock.H++;
                         Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                     }
+                    else
+                    {
+                        MarkCurrentBlock(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+                        gameBlock.IsAlive = false;
+                    }
                 }
                 if (pressed == Key.C)
                 {
@@ -530,7 +535,7 @@ namespace Tetris
         async Task PlayWithBlock(Block gameBlock)
         {
             gameBlock.H = 0;
-            while (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)))
+            while (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)) && gameBlock.IsAlive)
             {
                 gameBlock.H++;
                 Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
@@ -645,14 +650,14 @@ namespace Tetris
                         Score += 1200 * CurrentLevel;
                         break;                        
                 }
-                if(LinesCleared - 10 > 0)
+                if(LinesCleared - (10 + CurrentLevel) >= 0)
                 {
                     progress.Width = 0;
                     CurrentLevel++;
-                    MessageBox.Show($"You advanced to level {CurrentLevel}!");
+                    //MessageBox.Show($"You advanced to level {CurrentLevel}!");
                     LevelCheck();
                    
-                    LinesCleared = 0;
+                    LinesCleared -= (10 + CurrentLevel);
                 }
                 UpdateProgress();
             }           
