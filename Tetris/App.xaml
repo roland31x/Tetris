@@ -4,6 +4,34 @@
              xmlns:local="clr-namespace:Tetris"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <LinearGradientBrush x:Key="BlueBlueGradient" EndPoint="1,0" StartPoint="0,0">
+            <LinearGradientBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                    <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                    <RotateTransform Angle="-90" CenterX="0.5" CenterY="0.5"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </LinearGradientBrush.RelativeTransform>
+            <GradientStop Color="#FF141D4C"/>
+            <GradientStop Color="#FF3D77E7" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BlueBlueGradientR" EndPoint="0,0" StartPoint="1,0">
+            <LinearGradientBrush.RelativeTransform>
+                <TransformGroup>
+                    <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                    <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                    <RotateTransform Angle="-90" CenterX="0.5" CenterY="0.5"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </LinearGradientBrush.RelativeTransform>
+            <GradientStop Color="#FF141D4C"/>
+            <GradientStop Color="#FF3D77E7" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="RedBlackGradient" EndPoint="0.5,1" StartPoint="0.5,0" SpreadMethod="Pad">
+            <GradientStop Color="#FF450000" Offset="0"/>
+            <GradientStop Color="#FFED0000" Offset="1"/>
+        </LinearGradientBrush>
         <LinearGradientBrush x:Key="RainbowGradient1" EndPoint="1,0" StartPoint="0,0">
             <GradientStop Color="#FFE90F14"/>
             <GradientStop Color="#FFFF34FF" Offset="1"/>

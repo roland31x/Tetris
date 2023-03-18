@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -59,7 +60,7 @@ namespace Tetris
             IsPlaying = false;
             KeyDown += Play;
         }
-        void Play(object sender, KeyEventArgs e)
+        async void Play(object sender, KeyEventArgs e)
         {
             if (IsPlaying)
             {
@@ -72,20 +73,20 @@ namespace Tetris
                 if (pressed == Key.Left)
                 {
                     Offset--;
-                    Move(-1);
+                    await Move(-1);
                 }
                 if (pressed == Key.Right)
                 {
                     Offset++;
-                    Move(1);
+                    await Move(1);
                 }
                 if (pressed == Key.D)
                 {
-                    RotateCurrentBlock_Clockwise();
+                    await RotateCurrentBlock_Clockwise();
                 }
                 if (pressed == Key.A)
                 {
-                    RotateCurrentBlock_AntiClockwise();
+                    await RotateCurrentBlock_AntiClockwise();
                 }
                 if (pressed == Key.Down)
                 {
@@ -94,12 +95,12 @@ namespace Tetris
                     if (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)) && gameBlock.IsAlive)
                     {
                         gameBlock.H++;
-                        Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
+                        await Fall(gameBlock, gameBlock.H, OffsetCheck(this.Offset, gameBlock));
                     }
-                    else
-                    {
-                        gameBlock.IsAlive = false;
-                    }
+                    //else
+                    //{
+                    //    gameBlock.IsAlive = false;
+                    //}
                     //FallDelay = 100;
                 }
                 if (pressed == Key.C)
@@ -127,7 +128,7 @@ namespace Tetris
                 }
             }           
         }
-        void RotateCurrentBlock_AntiClockwise()
+        async Task RotateCurrentBlock_AntiClockwise()
         {
             if (currentBlock != null)
             {
@@ -137,11 +138,11 @@ namespace Tetris
                     currentBlock.Rotate();
                     currentBlock.Rotate();
                     currentBlock.Rotate();
-                    Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
+                    await Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
                 }
             }
         }
-        void RotateCurrentBlock_Clockwise()
+        async Task RotateCurrentBlock_Clockwise()
         {
             if(currentBlock != null)
             {
@@ -149,7 +150,7 @@ namespace Tetris
                 if (CanRotate(Temp,1))
                 {
                     currentBlock.Rotate();
-                    Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
+                    await Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
                 }
             }           
         }
@@ -189,21 +190,20 @@ namespace Tetris
                 Offset += 1;
                 currentBlock.H += 1;
                 return true;
-            }
-            
+            }           
             else return false;
         }
-        void Move(int i)
+        async Task Move(int i)
         {
             if(currentBlock != null)
             {
                 if (CanFall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock)))
                 {
-                    Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
+                    await Fall(currentBlock, currentBlock.H, OffsetCheck(this.Offset, currentBlock));
                 }
                 else if (CanFall(currentBlock, currentBlock.H + 1, OffsetCheck(this.Offset, currentBlock))) // wallkick on move
                 {
-                    Fall(currentBlock, currentBlock.H + 1, OffsetCheck(this.Offset, currentBlock));
+                    await Fall(currentBlock, currentBlock.H + 1, OffsetCheck(this.Offset, currentBlock));
                 }
                 else if (i == -1)
                 {
@@ -224,22 +224,39 @@ namespace Tetris
         }
         void DrawProgressBar()
         {
+            Label backgr = new Label()
+            {
+                Width = ProgressBackground.Width - 8,
+                Height = ProgressBackground.Height - 8,
+                Background = App.Current.Resources["RainbowGradient1"] as LinearGradientBrush
+            };
+            MainCanvas.Children.Add(backgr);
+            Canvas.SetLeft(backgr, Canvas.GetLeft(ProgressBackground) + 4);
+            Canvas.SetTop(backgr, Canvas.GetTop(ProgressBackground) + 4);
+            Panel.SetZIndex(backgr, 2);
+
             progress = new Label()
             {
-                Width = 0,
+                Width = ProgressBackground.Width - 8,
                 Height = ProgressBackground.Height - 8,
-                Background = new SolidColorBrush(Colors.LimeGreen)
+                Background = App.Current.Resources["BlackBlueGradient"] as LinearGradientBrush
             };
+            Panel.SetZIndex(progress, 3);
             MainCanvas.Children.Add(progress);
-            Canvas.SetLeft(progress, Canvas.GetLeft(ProgressBackground) + 4);
+            Canvas.SetRight(progress, Canvas.GetLeft(ProgressBackground) - 10);
             Canvas.SetTop(progress, Canvas.GetTop(ProgressBackground) + 4);
         }
-        async void UpdateProgress()
+        async Task UpdateProgress()
         {
             ScoreLabel.Content = Score.ToString();
             double startwidth = progress.Width;
-            double endwidth = ((ProgressBackground.Width - 4) * (double)LinesCleared) / 11;
-            for(double i = startwidth; i <= endwidth; i++)
+            double percent = (double)LinesCleared / 12;
+            if(percent > 1)
+            {
+                percent = 1;
+            }
+            double endwidth = ProgressBackground.Width - (ProgressBackground.Width - 4) * percent;
+            for(double i = startwidth; i >= endwidth; i--)
             {
                 progress.Width = i;
                 await Task.Delay(20);
@@ -285,7 +302,7 @@ namespace Tetris
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
                 FontFamily = new FontFamily("Bauhaus 93"),
-                Background = new SolidColorBrush(Colors.MediumAquamarine),
+                Background = new SolidColorBrush(Colors.LightSteelBlue),
             };
             MainCanvas.Children.Add(t);
             Canvas.SetLeft(t, 40);
@@ -296,7 +313,7 @@ namespace Tetris
             {
                 Width = t.Width + 8,
                 Height = t.Height + 8,
-                Background = new SolidColorBrush(Colors.Black),
+                Background = App.Current.Resources["BlueBlueGradient"] as LinearGradientBrush,
             };
             MainCanvas.Children.Add(HBorder);
             Canvas.SetLeft(HBorder, 40 - 4);
@@ -345,7 +362,7 @@ namespace Tetris
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
                 FontFamily = new FontFamily("Bauhaus 93"),
-                Background = new SolidColorBrush(Colors.MediumAquamarine)
+                Background = new SolidColorBrush(Colors.LightCoral)
             };
             MainCanvas.Children.Add(t);
             Canvas.SetZIndex(t, 1);
@@ -356,7 +373,7 @@ namespace Tetris
             {
                 Width = t.Width + 8,
                 Height = t.Height + 8,
-                Background = new SolidColorBrush(Colors.Black),
+                Background = App.Current.Resources["BlueBlueGradient"] as LinearGradientBrush,
             };
             MainCanvas.Children.Add(NBorder);
             Canvas.SetLeft(NBorder, Width - NextBlock.Width - 60 - 4);
@@ -366,8 +383,8 @@ namespace Tetris
         void DrawGameArea()
         {
             Canvas.SetZIndex(Area, 1);
-            MainCanvas.Background = new SolidColorBrush(Colors.BlueViolet);
-            Area.Background = new SolidColorBrush(Colors.DarkGray);
+            //MainCanvas.Background = new SolidColorBrush(Colors.BlueViolet);
+            Area.Background = App.Current.Resources["BlackBlueGradient"] as LinearGradientBrush;
             Area.Width = (Width * 0.7) * 1 / 2;
             Area.Height = (Height * 0.7);
             
@@ -375,7 +392,7 @@ namespace Tetris
             {
                 Width = Area.Width + 8,
                 Height = Area.Height + 8,
-                Background = new SolidColorBrush(Colors.Black),
+                Background = App.Current.Resources["BlueBlueGradient"] as LinearGradientBrush,
             };
             MainCanvas.Children.Add(GBorder);
             Canvas.SetLeft(GBorder, (Width - Area.Width) / 2 - 4);
@@ -441,7 +458,7 @@ namespace Tetris
             LinesCleared = 0;
             Score = 0;
             CurrentLevel = 1;
-            progress.Width = 0;
+            progress.Width = ProgressBackground.Width - 8;
             heldBlock = null;
             LevelCheck();
             UpdateProgress();
@@ -632,7 +649,7 @@ namespace Tetris
                 {
                     await LineDestroy(okLines, 250, Block.GetImage(i));
                 }
-                await LineDestroy(okLines, 500, Colors.Black);
+                await LineDestroy(okLines, 500, Colors.Black); // colors.black has no meaning, just a different parameter to display it as transparent
 
                 for (int i = 2; i < PlayHeight + 2; i++)
                 {
@@ -668,12 +685,12 @@ namespace Tetris
                 }
                 if(LinesCleared - (10 + CurrentLevel) >= 0)
                 {
-                    progress.Width = 0;
+                    await UpdateProgress();
+                    LinesCleared -= (10 + CurrentLevel);
+                    progress.Width = ProgressBackground.Width - 8;
                     CurrentLevel++;
                     //MessageBox.Show($"You advanced to level {CurrentLevel}!");
-                    LevelCheck();
-                   
-                    LinesCleared -= (10 + CurrentLevel);
+                    LevelCheck();                                      
                 }
                 UpdateProgress();
             }           
@@ -755,7 +772,7 @@ namespace Tetris
                 }
             }           
         }
-        void Fall(Block b, int fell, int Offset)
+        async Task Fall(Block b, int fell, int Offset)
         {
             for (int i = 0; i < PlayHeight + 2; i++)
             {
@@ -765,7 +782,11 @@ namespace Tetris
                     {
                         blocks[i, j].Background = null;
                         //(blocks[i, j].Parent as Border).BorderBrush = null;
-                    }                          
+                    }
+                    //else
+                    //{
+                    //    blocks[i, j].Background = new SolidColorBrush(Colors.GhostWhite);
+                    //}
                 }
             }
             //await Task.Delay(1000);
