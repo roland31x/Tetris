@@ -14,27 +14,31 @@ namespace Tetris
 {
     class BlockStack
     {
-        Stack<Block> blocks { get; set; }
-        public int Count { get {  return blocks.Count; } }
-
         static readonly Random rng = new Random();
+
+
+        Stack<Block> blocks { get; set; } 
+        public int Count { get {  return blocks.Count; } }
+      
         public BlockStack() 
         {
-            List<int> nr = new List<int>();
+            // tetris works in a way where each of the 6 blocks come in a random order, so worst case scenario is 1 block showing up once every 11 blocks ( at the start of the first stack and end of the 2nd stack ). 
+            List<int> nr = new List<int>(); // creates list of numbers from 0 to 6
             for (int i = 0; i < 7; i++)
             {
                 nr.Add(i);
             }
             blocks = new Stack<Block>();
-            for(int i = 0; i < 7; i++)
+            for(int i = 0; i < 7; i++)  
             {
-                int seed = nr[rng.Next(0, nr.Count)];
+                int seed = nr[rng.Next(0, nr.Count)];  // we randomize the order of the blocks by picking out a number from the 0 - 6 list and adding that block seed to the stack
                 blocks.Push(new Block(seed));
-                nr.Remove(seed);
+                nr.Remove(seed); 
             }
         }
         public void AddNewStack()
         {
+            // refills the stack with 6 blocks in random order
             List<int> nr = new List<int>();
             for (int i = 0; i < 7; i++)
             {
@@ -47,6 +51,7 @@ namespace Tetris
                 nr.Remove(seed);
             }
         }
+        // standard stack methods
         public void Push(Block block)
         {
             blocks.Push(block);
@@ -66,13 +71,13 @@ namespace Tetris
     }
     class Block
     {
-        public int[,] Body { get; set; }
-        public int Seed { get; set; }
-        public int H { get; set; }
-        public SolidColorBrush Color { get; private set; }
-        public ImageBrush image { get; private set; }
-        public bool IsAlive { get; set; }
-        public Block(int seed)
+        public int[,] Body { get; private set; }  // binary matrix that contains where the block has it's body on a 4x4 matrix
+        public int Seed { get; private set; } // seed means the ID of the block, an easier way to identify which block it is
+        public int H { get; set; } // H - aka the height property or the Vertical offset on the gameboard. This gets incremented as the block falls downwards
+        public SolidColorBrush Color { get; private set; } // color of the block ( unused now )
+        public ImageBrush image { get; private set; } // the image background of the block
+        public bool IsAlive { get; set; } // extra bool to check if block should fall more or not ( used to avoid hardstuck blocks )
+        public Block(int seed) // default constructor after seed
         {
             IsAlive = true;
             image = GetImage(seed);
@@ -82,7 +87,7 @@ namespace Tetris
             Seed = seed;
             H = 0;
         }
-        public Block(Block b)
+        public Block(Block b) // cloning constructor ( used for checking rotations )
         {
             image = b.image;
             Color = b.Color;
@@ -92,7 +97,7 @@ namespace Tetris
             H = b.H;
         }
 
-        public void Rotate()
+        public void Rotate() // standard rotation algo, transposing the matrix and switching the columns
         {
             if (Seed == 0)
             {              
@@ -136,7 +141,7 @@ namespace Tetris
             }
             
         }
-        void FillBody(Block b)
+        void FillBody(Block b) // cloning the body
         {
             for(int i = 0; i < 4; i++)
             {
@@ -149,7 +154,7 @@ namespace Tetris
                 }
             }
         }
-        void FillBody(int i)
+        void FillBody(int i) // creating the body based on seed, each method represents the shape
         {
             switch (i)
             {

@@ -24,29 +24,30 @@ namespace Tetris
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int PlayWidth = 10;
+        const int PlayWidth = 10; // tetris playfield is 10x20 visible with 2 hidden rows above
         const int PlayHeight = 20;
-        Label[,] blocks = new Label[22, 10];
-        BlockStack? currentStack { get; set; }
+        Label[,] blocks = new Label[22, 10]; 
 
-        int CurrentLevel = 1;
-        int Score = 0;
-        int FallDelay = 1000;
-        int LinesCleared = 0;
+        BlockStack? currentStack { get; set; } // the stack of blocks we will be pulling our blocks from
 
-        int Offset = 3;
+        int CurrentLevel = 1; // game starts from level 1
+        int Score = 0; 
+        int FallDelay = 1000;  // how often the game makes a block fall / check for block death
+        int LinesCleared = 0; // how many lines have been cleared
+
+        int Offset = 3; // This is the horizontal offset of the playfield, by default and on block spawns this gets reset to 3 so the block can spawn in the middle with a left offset for blocks that aren't the I or O
         
-        bool IsPlaying { get; set; }
-        bool Alive { get; set; }
+        bool IsPlaying { get; set; } // checks wether the game was started or not
+        bool Alive { get; set; } // used to see if blocks can spawn or there is a block obstructing the spawn aka the playfield has been filled up
 
 
-        Block? currentBlock { get; set; }
-        Block? nextBlock { get; set; }
-        Label[,] n_block = new Label[4, 4];
-        Block? heldBlock { get; set; }
-        Label[,] h_block = new Label[4, 4];
+        Block? currentBlock { get; set; } // the block that is currently falling down
+        Block? nextBlock { get; set; } // the next block that will be falling down
+        Label[,] n_block = new Label[4, 4]; // the visual representation of the block of it
+        Block? heldBlock { get; set; } // the block that is currently held by the player
+        Label[,] h_block = new Label[4, 4]; // same as nextblock matrix
 
-        Label progress { get; set; }
+        Label progress { get; set; } // the level progressbar that fills up as the player clears lines
 
         public MainWindow()
         {           
@@ -55,13 +56,14 @@ namespace Tetris
             Width = 1000;
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            InitialDraw();
+            InitialDraw(); // draws the areas that need to be calculated programatically instead of just placed in the designer
             CurrentLevelLabel.Content = $"LEVEL {CurrentLevel}";
             IsPlaying = false;
-            KeyDown += Play;
+            KeyDown += Play; 
         }
-        async void Play(object sender, KeyEventArgs e)
+        async void Play(object sender, KeyEventArgs e) 
         {
+            // marked async so we can await the block manipulation functions, to avoid fall checking conflicts
             if (IsPlaying)
             {
                 //if (e.IsRepeat)
@@ -73,12 +75,12 @@ namespace Tetris
                 if (pressed == Key.Left)
                 {
                     Offset--;
-                    await Move(-1);
+                    await Move(-1); // tries to move block to the left
                 }
                 if (pressed == Key.Right)
                 {
                     Offset++;
-                    await Move(1);
+                    await Move(1); // tries to move block to the right
                 }
                 if (pressed == Key.D)
                 {
@@ -86,11 +88,12 @@ namespace Tetris
                 }
                 if (pressed == Key.A)
                 {
-                    await RotateCurrentBlock_AntiClockwise();
+                    await RotateCurrentBlock_AntiClockwise(); 
                 }
                 if (pressed == Key.Down)
                 {
-                    // THIS BUGS OUT THE FALLING AVOID
+                    // THIS IS SSTILL WIP
+                    // if block can fall downwards 1 line, it will, if not, nothing happens 
                     Block gameBlock = currentBlock;
                     if (CanFall(gameBlock, gameBlock.H + 1, OffsetCheck(this.Offset, gameBlock)) && gameBlock.IsAlive)
                     {
@@ -103,20 +106,21 @@ namespace Tetris
                     //}
                     //FallDelay = 100;
                 }
-                if (pressed == Key.C)
+                if (pressed == Key.C) 
                 {
+                    // holding block mechanism, checks wether the player is holding a block ( if it is then it gets put on top of the block stack so it can drop next ), if not then the next block that would fall is stored.
                     if (heldBlock == null)
                     {
                         heldBlock = nextBlock;
-                        HeldBlockDraw();
-                        if (currentStack.Count == 0)
+                        HeldBlockDraw(); // shows it visually 
+                        if (currentStack.Count == 0) // we have to check if the stack is empty , if it is we have to add a new one because we have to draw the next block that will fall
                         {
                             currentStack.AddNewStack();
                         }
                         nextBlock = currentStack.Pop();
                         NextBlockDraw();
                     }
-                    else
+                    else // held block is pushed back on top of the stack and visuals are updated
                     {
                         currentStack.Push(nextBlock);
                         nextBlock = heldBlock;
@@ -132,7 +136,7 @@ namespace Tetris
         {
             if (currentBlock != null)
             {
-                Block Temp = new Block(currentBlock);
+                Block Temp = new Block(currentBlock); // we create a temporary copy of the current block, rotate it 3 times to achieve an anti-clockwise rotation and check wether it fits in new position or not
                 if (CanRotate(Temp,3))
                 {
                     currentBlock.Rotate();
@@ -142,9 +146,9 @@ namespace Tetris
                 }
             }
         }
-        async Task RotateCurrentBlock_Clockwise()
+        async Task RotateCurrentBlock_Clockwise() 
         {
-            if(currentBlock != null)
+            if(currentBlock != null) // same function as the anti-clockwise, but we only check if the block can fit by rotating it once
             {
                 Block Temp = new Block(currentBlock);
                 if (CanRotate(Temp,1))
@@ -154,9 +158,10 @@ namespace Tetris
                 }
             }           
         }
-        bool CanRotate(Block b,int times)
+        bool CanRotate(Block b,int times) 
         {
-            for(int i = 0; i < times; i++)
+            // checks what positions the block can rotate to, aka implementing a primite "wall-kick" algorithm.
+            for (int i = 0; i < times; i++)
             {
                 b.Rotate();
             }
