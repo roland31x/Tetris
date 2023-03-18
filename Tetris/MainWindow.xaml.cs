@@ -237,13 +237,13 @@ namespace Tetris
 
             progress = new Label()
             {
-                Width = ProgressBackground.Width - 8,
+                Width = ProgressBackground.Width - 6,
                 Height = ProgressBackground.Height - 8,
                 Background = App.Current.Resources["BlackBlueGradient"] as LinearGradientBrush
             };
             Panel.SetZIndex(progress, 3);
             MainCanvas.Children.Add(progress);
-            Canvas.SetRight(progress, Canvas.GetLeft(ProgressBackground) - 10);
+            Canvas.SetRight(progress, Canvas.GetLeft(ProgressBackground) - 12);
             Canvas.SetTop(progress, Canvas.GetTop(ProgressBackground) + 4);
         }
         async Task UpdateProgress()
