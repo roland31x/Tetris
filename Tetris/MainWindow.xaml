@@ -14,7 +14,7 @@
         <Grid x:Name="Area"/>
         <Grid x:Name="NextBlock"></Grid>
         <Grid x:Name="HoldBlock"></Grid>
-        <Label x:Name="CurrentLevelLabel" Height="116" Width="316" Canvas.Left="666" Canvas.Top="54" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Bauhaus 93" Content="LEVEL" FontSize="72" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch">
+        <Label x:Name="CurrentLevelLabel" Height="116" Width="316" Canvas.Left="666" Canvas.Top="126" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="{StaticResource TetrisFont}" Content="LEVEL" FontSize="42" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF00E4FF" Offset="1"/>
@@ -27,9 +27,9 @@
         </Label>
 
 
-        <Button Foreground ="{StaticResource RainbowGradient1}" Background="{StaticResource BlackBlueGradient}" Style ="{DynamicResource ButtonHoverStyle}" x:Name="StartButton" Click="StartButton_Click" Height="63" Canvas.Left="367" Canvas.Top="22" Width="266" HorizontalAlignment="Left" VerticalAlignment="Top" Content="START GAME" FontSize="36" BorderBrush="{StaticResource BlueBlueGradient}" FontFamily="Showcard Gothic">
+        <Button Foreground ="{StaticResource RainbowGradient1}" Background="{StaticResource BlackBlueGradient}" Style ="{DynamicResource ButtonHoverStyle}" x:Name="StartButton" Click="StartButton_Click" Height="63" Canvas.Left="367" Canvas.Top="22" Width="266" HorizontalAlignment="Left" VerticalAlignment="Top" Content="START GAME" FontSize="40" BorderBrush="{StaticResource BlueBlueGradient}" FontFamily="{StaticResource Bauhaus93}">
         </Button>
-        <Label x:Name="CurrentLevelLabel_Copy" Height="54" Width="248" Canvas.Left="700" Canvas.Top="488" FontFamily="Bauhaus 93" Content="SCORE" FontSize="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black">
+        <Label x:Name="CurrentLevelLabel_Copy" Height="54" Width="248" Canvas.Left="700" Canvas.Top="488" FontFamily="{StaticResource TetrisFont}" Content="SCORE" FontSize="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF00E4FF" Offset="1"/>
@@ -37,7 +37,7 @@
                 </LinearGradientBrush>
             </Label.Foreground>
         </Label>
-        <Label x:Name="ScoreLabel" Height="42"  Width="248" Canvas.Left="700" Canvas.Top="547" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Content="" FontSize="22" FontFamily="Bernard MT Condensed" BorderBrush="{StaticResource BlueBlueGradientR}" BorderThickness="4,4,4,4" Background="{StaticResource BlackBlueGradient}">
+        <Label x:Name="ScoreLabel" Height="60"  Width="248" Canvas.Left="700" Canvas.Top="547" HorizontalAlignment="Center" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Content="" FontSize="36" FontFamily="{StaticResource LCD}" BorderBrush="{StaticResource BlueBlueGradientR}" BorderThickness="4,4,4,4" Background="{StaticResource BlackBlueGradient}">
         </Label>
 
     </Canvas>

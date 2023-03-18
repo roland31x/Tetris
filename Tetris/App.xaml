@@ -4,6 +4,9 @@
              xmlns:local="clr-namespace:Tetris"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <FontFamily x:Key="TetrisFont">/Tetris;component/Resources/pixel calculon italic.otf#Pixel Calculon</FontFamily>
+        <FontFamily x:Key="Bauhaus93">/Tetris;component/Resources/bauhs93.ttf#Bauhaus 93</FontFamily>
+        <FontFamily x:Key="LCD">/Tetris;component/Resources/DS-DIGII.TTF#DS-Digital</FontFamily>
         <LinearGradientBrush x:Key="BlueBlueGradient" EndPoint="1,0" StartPoint="0,0">
             <LinearGradientBrush.RelativeTransform>
                 <TransformGroup>

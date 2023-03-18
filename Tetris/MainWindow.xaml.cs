@@ -301,7 +301,7 @@ namespace Tetris
                 Text = "HELD BLOCK:",
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
-                FontFamily = new FontFamily("Bauhaus 93"),
+                FontFamily = App.Current.Resources["Bauhaus93"] as FontFamily,
                 Background = new SolidColorBrush(Colors.LightSteelBlue),
             };
             MainCanvas.Children.Add(t);
@@ -361,7 +361,7 @@ namespace Tetris
                 Text = "NEXT BLOCK:",
                 TextAlignment = TextAlignment.Center,
                 FontSize = 33,
-                FontFamily = new FontFamily("Bauhaus 93"),
+                FontFamily = App.Current.Resources["Bauhaus93"] as FontFamily,
                 Background = new SolidColorBrush(Colors.LightCoral)
             };
             MainCanvas.Children.Add(t);

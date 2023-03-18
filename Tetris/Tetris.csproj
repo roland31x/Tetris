@@ -16,6 +16,10 @@
     <None Remove="Images\purple.jpg" />
     <None Remove="Images\red.jpg" />
     <None Remove="Images\yellow.jpg" />
+    <None Remove="Resources\bauhs93.ttf" />
+    <None Remove="Resources\DS-DIGII.TTF" />
+    <None Remove="Resources\LCD-BOLD.TTF" />
+    <None Remove="Resources\pixel calculon italic.otf" />
     <None Remove="tetris-logo.png" />
   </ItemGroup>
 
@@ -28,6 +32,12 @@
     <Resource Include="Images\purple.jpg" />
     <Resource Include="Images\red.jpg" />
     <Resource Include="Images\yellow.jpg" />
+    <Resource Include="Resources\bauhs93.ttf" />
+    <Resource Include="Resources\DS-DIGII.TTF" />
+    <Resource Include="Resources\LCD-BOLD.TTF">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\pixel calculon italic.otf" />
     <Resource Include="tetris-logo.png" />
   </ItemGroup>
 
